@@ -1,9 +1,12 @@
-#import math
+from colors import colors
 x_size = 400
 y_size = 400
 cx = x_size//2
 cy = y_size//2
-from colors import colors
+s1_x = 0
+s1_y = 0
+s2_x = x_size
+s2_y = 0
 
 radius = 150
 diameter = 2*radius
@@ -75,11 +78,19 @@ def draw():
         j = 0
         base_drawing()
     
+    report(frameCount, j, angle)
+    px, py = circle_sine_point(angle)
+    draw_point(px, py)
+    suspend(px, py)
+    distances(px, py)
+#draw
+
+def report(frameCount, j, angle):
     noStroke()
     # stroke(colors['green'])
     # strokeWeight(1)
     fill(240)
-    rect(cx-40, cy-20, 150, 60)
+    rect(cx-40, cy-20, 140, 60)
     fill(colors['black'])
     
     report = '\n'.join(['frameCount: {}',
@@ -88,12 +99,35 @@ def draw():
                         ]).format(frameCount, j, angle)
     text(report, cx-40, cy)
 
+def circle_sine_point(angle):
+    r = radius + ( amplitude * sin(angle*waves) )
+    x = cx + r*cos(angle)
+    y = cy + r*sin(angle)
+    return x, y
+
+def draw_point(x, y):
     strokeWeight(5)
     stroke(colors['fuchsia'])
-    r = radius + ( amplitude * sin(angle*waves) )
-    point(cx + r*cos(angle),
-          cy + r*sin(angle))
-#draw
+    point(x, y)
+
+def suspend(x, y):
+    strokeWeight(1)
+    stroke(colors['lightblue'])
+    line(s1_x, s1_y, x, y)
+    line(s2_x, s2_y, x, y)
+
+def distances(x, y):
+    l1 = dist(s1_x, s1_y, x, y)
+    l2 = dist(s2_x, s2_y, x, y)
+    fill(240)
+    noStroke()
+    #stroke(colors['green'])
+    #strokeWeight(1)
+    rect(20, 5, 50, 20)
+    rect(x_size-60, 5, 50, 20)
+    fill(colors['black'])
+    text(l1, 20, 20)
+    text(l2, x_size-60, 20)
 
 def mouse_pause(fr_slow=1, fr_fast=frame_rate):
     if (mousePressed and mouseButton==LEFT):
